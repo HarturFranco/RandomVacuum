@@ -145,7 +145,7 @@ def RandomAgentProgram(actions):
     >>> environment.status == {(1, 0): 'Clean' , (0, 0): 'Clean'}
     True
     """
-    return lambda percept: random.choice(actions)
+    return lambda percept: 'Suck' if percept[1] else random.choice(actions)
 
 
 # ______________________________________________________________________________
@@ -811,8 +811,12 @@ class OurVacuumEnvironment(Environment):
     status. This serves as an example of how to implement a simple
     Environment."""
 
-    def __init__(self):
+    def __init__(self, gridSize=(2, 2)):
         super().__init__()
+        n, m = gridSize
+        
+        self.cenario = [[dict({"Right" : tuple((i, j+1)) if j+1<n else None, "Left" : tuple((i, j-1)) if j-1>0 else None, "Top" : tuple((i-1, j)) if i-1>0 else None, "Down" : tuple((i+1, j)) if i+1<n else None, "Dirty" : random.choice([True, False])}) for j in range(m)] for i in range(n)]
+        
         self.status = {loc_A: random.choice(['Clean', 'Dirty']),
                        loc_B: random.choice(['Clean', 'Dirty']),
                        loc_C: random.choice(['Clean', 'Dirty']),
@@ -823,57 +827,71 @@ class OurVacuumEnvironment(Environment):
 
     def percept(self, agent):
         """Returns the agent's location, and the location status (Dirty/Clean)."""
-        return agent.location, self.status[agent.location]
+        return agent.location, self.cenario[agent.location[0]][agent.location[1]]["Dirty"]
 
     def execute_action(self, agent, action):
         """Change agent's location and/or location's status; track performance.
         Score 10 for each dirt cleaned; -1 for each move."""
-        if action == 'Right':
-            if agent.location == loc_A:
-                agent.location = loc_B            
-                agent.performance -= 1
-            elif agent.location == loc_C:
-                agent.location = loc_D            
-                agent.performance -= 1
-            else:
-                agent.performance -= 2
-        elif action == 'Left':
-            if agent.location == loc_B:
-                agent.location = loc_A            
-                agent.performance -= 1
-            elif agent.location == loc_D:
-                agent.location = loc_C            
-                agent.performance -= 1
-            else:
-                agent.performance -= 2
-        elif action == 'Top':
-            if agent.location == loc_C:
-                agent.location = loc_A            
-                agent.performance -= 1
-            elif agent.location == loc_D:
-                agent.location = loc_B            
-                agent.performance -= 1
-            else:
-                agent.performance -= 2
-        elif action == 'Down':
-            if agent.location == loc_A:
-                agent.location = loc_C            
-                agent.performance -= 1
-            elif agent.location == loc_B:
-                agent.location = loc_D            
-                agent.performance -= 1
-            else:
-                agent.performance -= 2
-        elif action == 'Suck':
-            if self.status[agent.location] == 'Dirty':
+        if action == 'Suck':
+            if self.cenario[agent.location[0]][agent.location[1]]["Dirty"]:
+                self.cenario[agent.location[0]][agent.location[1]]["Dirty"] = False
                 agent.performance += 10
-            self.status[agent.location] = 'Clean'
-        else:
+            else:
+                agent.performance -= 5
+        elif action == "NoOp":
             agent.performance -= 5
-
+        else:
+            if self.cenario[agent.location[0]][agent.location[1]][action]:
+                agent.location = self.cenario[agent.location[0]][agent.location[1]][action]            
+                agent.performance -= 1
+            else:
+                agent.performance -= 5
+        
+#         if action == 'Right':
+#             if agent.location == loc_A:
+#                 agent.location = loc_B            
+#                 agent.performance -= 1
+#             elif agent.location == loc_C:
+#                 agent.location = loc_D            
+#                 agent.performance -= 1
+#             else:
+#                 agent.performance -= 2
+#         elif action == 'Left':
+#             if agent.location == loc_B:
+#                 agent.location = loc_A            
+#                 agent.performance -= 1
+#             elif agent.location == loc_D:
+#                 agent.location = loc_C            
+#                 agent.performance -= 1
+#             else:
+#                 agent.performance -= 2
+#         elif action == 'Top':
+#             if agent.location == loc_C:
+#                 agent.location = loc_A            
+#                 agent.performance -= 1
+#             elif agent.location == loc_D:
+#                 agent.location = loc_B            
+#                 agent.performance -= 1
+#             else:
+#                 agent.performance -= 2
+#         elif action == 'Down':
+#             if agent.location == loc_A:
+#                 agent.location = loc_C            
+#                 agent.performance -= 1
+#             elif agent.location == loc_B:
+#                 agent.location = loc_D            
+#                 agent.performance -= 1
+#             else:
+#                 agent.performance -= 2
+#         elif action == 'Suck':
+#             if self.status[agent.location] == 'Dirty':
+#                 agent.performance += 10
+#             self.status[agent.location] = 'Clean'
+#         else:
+#             agent.performance -= 5
     def default_location(self, thing):
         """Agents start in either location at random."""
-        return random.choice([loc_A, loc_B, loc_C, loc_D])
+        return tuple((random.choice(range(0, len(self.cenario))), random.choice(range(0, len(self.cenario[0])))))
     
 
 
