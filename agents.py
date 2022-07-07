@@ -29,17 +29,9 @@ EnvCanvas ## Canvas to display the environment of an EnvGUI
 # TODO
 # Speed control in GUI does not have any effect -- fix it.
 
-from utils import distance_squared, turn_heading
-from statistics import mean
-from ipythonblocks import BlockGrid
-from IPython.display import HTML, display, clear_output
-from time import sleep
-from tabulate import tabulate
 import random
-import copy
 import collections
 import numbers
-
 
 # ______________________________________________________________________________
 
@@ -243,18 +235,8 @@ class OurVacuumEnvironment(Environment):
         super().__init__()
         n, m = gridSize
         
-        self.cenario = [[dict({"Right" : tuple((i, j+1)) if j+1<n else None, "Left" : tuple((i, j-1)) if j-1>=0 else None, "Top" : tuple((i-1, j)) if i-1>=0 else None, "Down" : tuple((i+1, j)) if i+1<n else None, "Dirty" : random.choice([True, False])}) for j in range(m)] for i in range(n)]
-        lista_print = [["(Dirty)" if coluna["Dirty"] else "(Clean)" for coluna in linha] for linha in self.cenario]
-        
-        # for i in range(n):
-        #     for j in range(m):
-        #         tabela.append(self.cenario)
-        self.status = str(tabulate(lista_print, tablefmt="grid"))
-        # self.status = dict({})
-        # self.status = {loc_A: random.choice(['Clean', 'Dirty']),
-        #                loc_B: random.choice(['Clean', 'Dirty']),
-        #                loc_C: random.choice(['Clean', 'Dirty']),
-        #                loc_D: random.choice(['Clean', 'Dirty'])}
+        self.cenario = [[dict({"Right" : tuple((i, j+1)) if j+1<m else None, "Left" : tuple((i, j-1)) if j-1>=0 else None, "Top" : tuple((i-1, j)) if i-1>=0 else None, "Down" : tuple((i+1, j)) if i+1<n else None, "Dirty" : random.choice([True, False])}) for j in range(m)] for i in range(n)]
+    
 
     def thing_classes(self):
         return [Wall, Dirt, ReflexVacuumAgent, RandomVacuumAgent, TableDrivenVacuumAgent, ModelBasedVacuumAgent]
@@ -266,7 +248,7 @@ class OurVacuumEnvironment(Environment):
     def execute_action(self, agent, action):
         """Change agent's location and/or location's status; track performance.
         Score 10 for each dirt cleaned; -1 for each move."""
-        print(action)
+        agent.last_action = action
         if action == 'Suck':
             if self.cenario[agent.location[0]][agent.location[1]]["Dirty"]:
                 self.cenario[agent.location[0]][agent.location[1]]["Dirty"] = False

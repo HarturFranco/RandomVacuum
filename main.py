@@ -11,20 +11,19 @@ if os.name == 'nt':
 else:
     clearCommand = 'clear'
 
-
 # Inicializa o ambiente customizado 
-our_vacuum_env = OurVacuumEnvironment((4,4))
-lista_print = [["(Dirty)" if coluna["Dirty"] else "(Clean)" for coluna in linha] for linha in our_vacuum_env.cenario]
-
-# Printa o estado inicial do ambiente
-print("State of the Environment: {}.".format(tabulate(lista_print, tablefmt="grid")))
+our_vacuum_env = OurVacuumEnvironment((2,3))
 
 # Cria o agente randomico
 random_agent = RandomVacuumAgent()
 
 # Adiciona o agente ao ambiente e printa sua posição no grid
 our_vacuum_env.add_thing(random_agent)
-print("RandomVacuumAgent is located at {}.".format(random_agent.location))
+
+# Printa o estado inicial do ambiente
+lista_print = [["(Dirty)" if coluna["Dirty"] else "(Clean)" for coluna in linha] for linha in our_vacuum_env.cenario]
+lista_print[random_agent.location[0]][random_agent.location[1]]+= "\n(Agent)"
+print("Estado inicial do cenário:\n{}.".format(tabulate(lista_print, tablefmt="grid")))
 
 # Rodando o ambiente
 while True:
@@ -32,13 +31,14 @@ while True:
     sleep(2)
     os.system(clearCommand)
 
+    # Faz com que o agente realiza uma operação
     our_vacuum_env.step()
 
+    # Preparativos para o print do estado atual do Ambiente
     lista_print = [["(Dirty)" if coluna["Dirty"] else "(Clean)" for coluna in linha] for linha in our_vacuum_env.cenario]
-
-    # Printa o estado atual do Ambiente
-    
     lista_print[random_agent.location[0]][random_agent.location[1]]+= "\n(Agent)"
-
-    print("State of the Environment:\n {:}.".format(tabulate(lista_print, tablefmt="grid")))
+    
+    # Printa o estado atual do Ambiente
+    print("Ação realizada: {}".format(random_agent.last_action))
+    print("Estado do cenário após a realização da ação:\n{}.".format(tabulate(lista_print, tablefmt="grid")))
     
