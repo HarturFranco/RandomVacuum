@@ -238,8 +238,8 @@ class OurVacuumEnvironment(Environment):
         self.cenario = [[dict({"Right" : tuple((i, j+1)) if j+1<m else None, "Left" : tuple((i, j-1)) if j-1>=0 else None, "Top" : tuple((i-1, j)) if i-1>=0 else None, "Down" : tuple((i+1, j)) if i+1<n else None, "Dirty" : random.choice([True, False])}) for j in range(m)] for i in range(n)]
     
 
-    def thing_classes(self):
-        return [Wall, Dirt, ReflexVacuumAgent, RandomVacuumAgent, TableDrivenVacuumAgent, ModelBasedVacuumAgent]
+    # def thing_classes(self):
+    #     return [Wall, Dirt, ReflexVacuumAgent, RandomVacuumAgent, TableDrivenVacuumAgent, ModelBasedVacuumAgent]
 
     def percept(self, agent):
         """Returns the agent's location, and the location status (Dirty/Clean)."""

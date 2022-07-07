@@ -47,7 +47,7 @@ while our_vacuum_env.is_dirty():
     # Printa o estado atual do Ambiente
     print("Ação realizada: {}".format(random_agent.last_action))
     print("Estado do cenário após a realização da ação:\n{}.".format(tabulate(lista_print, tablefmt="grid")))
-
+# Resultado Final.
 sleep(2)
 os.system(clearCommand)
 print("Performance final do agente: {}".format(random_agent.performance))
