@@ -2,17 +2,23 @@
 from agents import *
 from tabulate import tabulate
 from time import sleep
+import sys
 import os
 
 """ Verifica o SO em que o código esta sendo executado
  e seta o comando de limpar o terminal para cada SO"""
-if os.name == 'nt':
-    clearCommand = 'cls'
+clearCommand = 'cls' if os.name == 'nt' else 'clear'
+
+# Entrada pode ser dois inteiros, um inteiro ou nada :)
+if len(sys.argv) == 3:
+    gridsize = (int(sys.argv[1]), int(sys.argv[2]))
+elif len(sys.argv) == 2:
+    gridsize = (int(sys.argv[1]), int(sys.argv[1]))
 else:
-    clearCommand = 'clear'
+    gridsize = (2,2)
 
 # Inicializa o ambiente customizado 
-our_vacuum_env = OurVacuumEnvironment((2,3))
+our_vacuum_env = OurVacuumEnvironment(gridsize)
 
 # Cria o agente randomico
 random_agent = RandomVacuumAgent()
@@ -26,7 +32,7 @@ lista_print[random_agent.location[0]][random_agent.location[1]]+= "\n(Agent)"
 print("Estado inicial do cenário:\n{}.".format(tabulate(lista_print, tablefmt="grid")))
 
 # Rodando o ambiente
-while True:
+while our_vacuum_env.is_dirty():
     
     sleep(2)
     os.system(clearCommand)
@@ -41,4 +47,8 @@ while True:
     # Printa o estado atual do Ambiente
     print("Ação realizada: {}".format(random_agent.last_action))
     print("Estado do cenário após a realização da ação:\n{}.".format(tabulate(lista_print, tablefmt="grid")))
-    
+
+sleep(2)
+os.system(clearCommand)
+print("Performance final do agente: {}".format(random_agent.performance))
+print("Estado do cenário após a Fim da execução:\n{}.".format(tabulate(lista_print, tablefmt="grid")))

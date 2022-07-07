@@ -264,7 +264,14 @@ class OurVacuumEnvironment(Environment):
                 agent.performance -= 1
             else:
                 agent.performance -= 5
-        
+
+    def is_dirty(self):
+        for m in self.cenario:
+            for room in m:
+                if room['Dirty']:
+                    return True
+        return False
+
     def default_location(self, thing):
         """Agents start in either location at random."""
         return tuple((random.choice(range(0, len(self.cenario))), random.choice(range(0, len(self.cenario[0])))))
